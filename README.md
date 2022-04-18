@@ -1,207 +1,392 @@
 
-# openUC2 High-throughput module (Hi2)
+# openUC2 Multicolour Fluorescence 
 
-This device is intended to help you use a very simple [GRBL](https://github.com/grbl/grbl)-based Arduino Shield controlled by a Raspberry Pi/Nvidia Jetson to automatically image a multiwell plate to with a UC2-based microscope. Curious to see what this looks like? Scroll to the very bottom of the page.
-
-<p align="center">
-<a href="#logo" name="logo"><img src="./IMAGES/topbottom.PNG" width="600"></a>
-</p>
-
-
-The microscope is compact enough to fit in cell incubators and the [Opentrons OT2](opentrons.com) pipetting robot. Of course, this microscope can also be used in other environments. By varying the orientiation and selection of the cube modules it is possible to realize widefield fluorescence, but also bright field microscopy. The overall price is in the range of 1000€.
+Here we present some modules that will help you to first join different laser/light sources using a tunable dichroic mirror and linear dichroic filter switchers. Both modules can direclty snap into the UC2 system.
+Curious to see what this looks like? Scroll to the very bottom of the page.
 
 <p align="center">
-<a href="#logo" name="logo"><img src="./IMAGES/insideopentrons.PNG" width="400"></a>
+<a href="#logo" name="logo"><img src="./IMAGES/Application_Multicolour_Fluorescence_v3.png" width="600"></a>
 </p>
+
+**Figure 1:** *(From-left-to-right) Compact linear filter switch that mounts the way that a beam couples from "behind"; same filter switcher, but beam enters from above; Laser beam combiner*
+
 
 
 ***Features:***
-
-- Move multi-well plate in XY
-- NEMA11-based z-focusing stage which relies on CNC linear rails
-- Fast scanning
-- Whole setup <1000€ in parts for a fluorescence microscope
-- All 3D printed + off-the-shelf components
-- Minimum of tools required
-- Use GRBL as the motion protocol
-- Use the [openflexure microscope server](https://openflexure.org/projects/microscope/) as the control software
-
-
-
-# Table of Content
-
-**[Electronics](#Electronics)**
-**[Software](#Software)**
-**[Hardware](#Hardware)**
-**[Bill of materials](#Results)**
-**[Results](#Results)**
-
-
+* Switch flourescence filters/dichroics linearly
+* Align two beams w.r.t. each other
+* Low-cost
+* Integrate into the UC2 system
 
 
 ## In-Action
 
-You can directly control the microscope from the opentrons Jupyter notebook. We have collected some notebooks showing its control in the folder [./JUPYTER](./JUPYTER). This way it becomes very simple to plan experiments which involve both, pipetting and imaging.
+The filter switcher basically works like the one below. This version is deprecated, but the principle remains the same. 
 
 <p align="center">
-<a href="#logo" name="logo"><img src="./IMAGES/InAction_1.gif" width="600"></a>
-</p>
-
-### Inside the Opentrons
-
-Using a laser excitation and a white-light Led mounted in one of the place of the pipetting arm it is possible to realize fluorescence and brightfield microscopy for large-scale high throughput imaging.
-
-<p align="center">
-<a href="#logo" name="logo"><img src="./IMAGES/InAction_2.gif" width="600"></a>
+<a href="#logo" name="logo"><img src="./IMAGES/filtermove2.gif" width="600"></a>
 </p>
 
 
-### More advanced pipetting and imaging protocols
+# Software
 
-Using the Opentrons Jupyter Notebook integration together with the REST-API based [Openflexure Microscope Pylcient](https://gitlab.com/openflexure/openflexure-microscope-pyclient/-/blob/master/openflexure_microscope_client), one can easily created complicated pipetting workflows that require an imaging step in between. The below expdreiment shows an automated workflow where yeast cells were seeded at varying concentrations and different reagents where added sequentially. In between the microscope automatically performs whole well plate scans.
+## Firmware 
 
-<p align="center">
-<a href="#logo" name="logo"><img src="./IMAGES/FullExperiment.gif" width="600"></a>
-</p>
+The laser control and motion of the filter is done by the [UC2-REST](https://github.com/openUC2/UC2-REST) firmware. It is a work-in-progress and we suggest you to reach out to us through an issue when you're keen on using the software
 
-### Pipetting Workflows combined with imaging
+## GUI/Controlsoftware
 
-<p align="center">
-<a href="#logo" name="logo"><img src="./IMAGES/InAction_3.gif" width="600"></a>
-</p>
+We forked the beautiful [ImSwitch](https://github.com/kasasxav/ImSwitch/) and adapted many functionalities (e.g. Filter swtichting) into their framework. The [beniroquai fork](https://github.com/beniroquai/ImSwitch/) implements the above mentioned Firmware [UC2-REST](https://github.com/openUC2/UC2-REST). Also here: It is a work-in-progress and we encourage you to reach out to us if you need help. :-)
 
+## Python Code
 
-# SOFTWARE
-
-**Warning:** This is still under strong development. We derived the software to control the GRBL-based XYZt stage from the [Openflexure microscope project](https://gitlab.com/beniroquai/openflexure-microscope-server) by Bowman et al.
-Instead of using a Raspberry Pi camera, we use an Nvidia Jetson Nano singleboard computer and run a customized version of the OFM server that can control the GRBL board and the monochrome CMOS camera.
-
-A detailed set of instructions for installing the Openflexure Server (OFM Server) can be found in a dedicated [README_SOFTWARE.md](README_SOFTWARE.md) (it is under construction..). In case you want a preinstalled image, please contact us!
+A ESP32-Python client to control the motors that are connected to e.g. the CNC-Shield v3 can be found here [ESP32Client.py](https://github.com/openUC2/UC2-REST/blob/master/PYTHON/ESP32Client.py).
 
 
+# Hardware - Beamcombiner
+
+Below we describe how the device can be build and assembled in order to replicate the whole system as shown in the rendering above. One needs additional parts that can be found in the core [openUC2 repository](https://github.com/openUC2/UC2-GIT).
 
 
-# HARDWARE
+## Bill of material
 
-Below we describe how the XY Stage can be build and assembled in order to replicate the whole system as shown in the rendering above one needs additional parts that can be found in the original [openUC2 repository](https://github.com/bionanoimaging/UC2-GIT). The most important modules you will need are the following:
+Below you will find all components necessary to build the beamcombiner
 
-- [Baser Camera](https://github.com/bionanoimaging/UC2-GIT/tree/master/CAD/ASSEMBLY_CUBE_BaslerCam)
-- [Dichroic Beamsplitter](https://github.com/bionanoimaging/UC2-GIT/tree/master/CAD/ASSEMBLY_CUBE_Dichroic_Beamsplitter)
-- [45° Silver Protected Mirror](https://github.com/bionanoimaging/UC2-GIT/tree/master/CAD/ASSEMBLY_CUBE_Mirror_45_Thorlabs)
-- [Z-STage using NEMA motor](https://github.com/bionanoimaging/UC2-GIT/tree/master/CAD/ASSEMBLY_CUBE_Z-STAGE_NEMA_MGN)
-- [Laser Module for fluorescence](https://github.com/bionanoimaging/UC2-GIT/tree/master/CAD/ASSEMBLY_CUBE_Laser)
+### 3D printing files
 
-## XY Stage
+All these files in the folder [./STL/Beamcombiner](./STL/Beamcombiner) need to be printed. We used a Prusa i3 MK3 using PLA Prusament (Galaxy Black) at layer height 0.3 mm and infill 30%.
 
-For scanning a full multi-well plate we decided to rely on a commercially available laser engraving system from Nejetools.com. The Neje Master Mini 2 costs around 100-160€ and is available in many countries. The design has been replicated by many other brands and can be found for even lower prices at Aliexpress/Alibaba or alike. The overall mechanical design looks like this:
+Additionally you need 1x Cube.
 
 <p align="center">
-<a><img src="https://images-na.ssl-images-amazon.com/images/I/61LtnyMEFeL._AC_SL1200_.jpg" width="600"></a>
+<a href="#logo" name="logo"><img src="./IMAGES/Application_Multicolour_Fluorescence_Beamcombiner_v3.png" width="600"></a>
 </p>
 
-We use the device as is and simply swap the 450nm laser with a customized sample-plate holder which ensures proper plate leveling. The working range is sufficiently large to scan the whole plate. For the integration of this device into the UC2 standard, one only requires 5 additional 3D printed parts which direclty adapt to the 3D printed cubes + baseplates (v3 -> so you need either the injection moulded parts or need to add the 5 screws for proper fitting).
 
-<p align="center">
-<a href="#logo" name="logo"><img src="./IMAGES/ZStage_old_18.jpg" width="500"></a>
-</p>
-*The plate can easily adapt all kinds of samples*
-
-
-Theoretically one can directly be used using the internal 32Bit processing board using the customized [python wrapper](./PYTHON/nejeboard.py). Nevertheless, we found its functionality rather limited, and decided to use an additional CNC controler board to explore the full functionalities including the Z-stage control, Laser and LED control.
-
-If everything is connected properly, the device can for example also be used as a proper plate shaker inside the Opentrons:
-
-<p align="center">
-<a href="#logo" name="logo"><img src="./IMAGES/PlateShaker.gif" width="500"></a>
-</p>
-
-### Bill of material
-
-Below you will find all components necessary to build this device
-
-#### 3D printing files
-
-All these files need be printed. We used a Prusa i3 MK3 using PLA Prusmant (Galaxy Black) at layer height 0.3 mm and infill 80%.
-
-
-|  Type | Details  |  Price | Link  |
-|---|---|---|---|
-| 2x Level Arm for height adjusting the wellplate | Plate holder |  0.04 € | [Assembly_CUBE_XY_Stage_neje_laser_v3_TMP_Holder_MTP.stl](./STL/Assembly_CUBE_XY_Stage_neje_laser_v3_TMP_Holder_MTP.stl)  |
-| 2x Plateadapter for Neje to Uc2 Baseplate | Adapt the stage to the puzzle-like baseplate |  4 € | [Assembly_CUBE_XY_Stage_neje_laser_v3_30_Adapter_neje_to_cube_bd_v3_1.stl](./STL/Assembly_CUBE_XY_Stage_neje_laser_v3_30_Adapter_neje_to_cube_bd_v3_1.stl)  |
-| 1x Multiwell plate holder | is mounted in place of the laser |  4 € | [Assembly_CUBE_XY_Stage_neje_laser_v3_30_MTP_wellplate_to_sample_adapter.stl](./STL/Assembly_CUBE_XY_Stage_neje_laser_v3_30_MTP_wellplate_to_sample_adapter.stl)  |
-| 1x Adapter for multi-well plate | Holds the multiwell plate assembly in place where usually the laser sits |  4 € | [Assembly_CUBE_XY_Stage_neje_laser_v3_Neje_Support_Slider_Y.stl](./STL/Assembly_CUBE_XY_Stage_neje_laser_v3_Neje_Support_Slider_Y.stl)  |
-
-#### Additional parts
-
+### Additional parts
 This is used in the current version of the setup
 
 |  Type | Details  |  Price | Link  |
 |---|---|---|---|
-| NEJE MASTER 2 MINI | Laserengraver for XY scanning|  100-160 € | [Neje](https://neje.shop/products/high-speed-mini-laser-engraving-machine-with-wireless-app-control-110-x-120mm-roll-protection)  |
-| MKS DLC CNC  (NEMA Motors) | Controller Electronics for NEMA motors and Laser |  25 € | [Roboter-Baukasten](https://www.roboter-bausatz.de/p/mks-dlc-cnc-lasergravierer-mainboard-grbl)  |
-| M3, M4 Screws | Screw Set |  12 € | [Ebay](https://www.ebay.de/itm/Schrauben-Set-520tlg-Edelstahl-Schrauben-Muttern-M3-M4-M5-Linsenkopfschrauben/383726480774?_trkparms=ispr%3D1&hash=item5957e16d86:g:G5sAAOSwVFpfZIpI&amdata=enc%3AAQAFAAACcBaobrjLl8XobRIiIML1V4Imu%252Fn%252BzU5L90Z278x5ickkxFtV7J5P58ubuVigtBH%252Fe6pb1LxAKCnCULXdvRrl4LVsR3MjfE7wqRxrrBJlBysxXCQuNVptPKS9BmNaHKDLIeQv9NKj6IvrJW%252FufTTddFXGF8U%252BnasvpahEx2Fwxrry8XZyS4eQQvsN4mA59aRp9J7k6D4K06%252FFcobu4rHnfQ1VDPT8wflsYId3xtETX7pohjCj3dUHx%252B2xdTjlELu04rULIiL6TUEAeM14OltNcoB1t2%252Fh8V8LKjZEnZdlr%252F%252FRXMuJEQYYDBP%252BBnRL5njzYMyjhWI4zWNk15%252BO1Dp35UhzgbADwjZ0qAo99s3c3Ti6IYmF969jgsb%252BGsP1O7z0Hr%252BpldAp1SHfquGj6eFoy%252FGQNJEId0Py85H1LaFn6Hyci2zHqyBgOacd3mquWr7LNT%252F%252FwpC%252FdQKhGyC2IC0Em1d%252BmmZ6ooQu3vmdiJsgBl3Xo3aLS%252BgW8Wt9gV9q8CMkm20NLpQ6jZyrsf%252FIuilQiHFyzw1J4VLI9n0%252BL6%252FBAH3YJmF%252B73OfglDgtfXR6JsIfmQWs%252FZHZiL3amLq0SmiL8EMrSxXt%252BIJ%252BiGbRoPXdxz3szICKQI4q9q%252FD722ZzcNie8%252FzhMVivT30E1KgYJfz%252FAfU7gvNCXLVDGSFbcWoPzhKkeHwScOm%252BdH7lynZeiltxRDBO87crSnuH9QoeU7MYThFdOChZ32I32GDoDan46MhW38X80oeXGp6BhDrkOgATOEQNgh3vOFRSl5P2ew7vYL%252Bv4da0aJy2ThL5WfIGHbt9qjkwQjEBY4JexecOA7qQ%253D%253D%7Ccksum%3A38372648077480f9cf3eb2fe485292adf88c008d37c8%7Campid%3APL_CLK%7Cclp%3A2334524)  |
-| yourDroid Netzteil 12V 3A 5,5x2,1mm DC-Stecker | Power  Supply 12V |  6,45 € | [Roboter-Baukasten](https://www.roboter-bausatz.de/)  |
-| 3x A4988 Schrittmotorentreiber	RBS10232 | Stepper Driver |  0,99 € | [Roboter-Baukasten](https://www.roboter-bausatz.de/)  |
-| Spring | Diameter: 5mm, 15mm long |  0,99 € | [Roboter-Baukasten](https://www.roboter-bausatz.de/)  |
+| Dichroic mirror | Depending on your two wavelengths (25mm diameter or 25x16mm, chosoe adapter accordingly) |  10-100 € | [Comar](https://www.comaroptics.com/components/filters/dichroic-filters/long-pass-dichroic-filters)  |
+| (optional) Fiber coupled laser | Depending on your system (e.g. MiCost, see SQUID paper) |  10-100 € | [MiCost](micost.com)  |
+| (optional) Fiber adapter | 2x Thorlabs SM1FC |  15 € | [Thorlabs](Thorlabs.com)  |
+| M3 screws | For kinematic mounting (non magnetic will be ok) |  1 € | [various](amazon.com)  |
+| O-ring | 2x to add backtracing force; 10-15mm diameter |  1 € | [various](amazon.com)  |
 
+### Design files
+The original design files are in the [INVENTOR](./INVENTOR) folder. 
 
-### Assembly of the XY Stage
+### Electronics
+We develop a dedicated Electronics module called [UC2 Feather](https://github.com/openUC2/UC2_Feather/). Alternatively you can use an ESP32 Wemos d32 in conjuction with an CNC Shield v3.
 
-<p align="center">
-<a> <img src="./IMAGES/XY_Stage_7.jpg" width="300"></a>
-</p>
+### Assembly of the DEVICE
 
-***1.*** *These are the parts needed for the multi-well plate adapter: The spring-loaded leve larm mechanism ensures a tilt-free loading of a plate. The plate is only hold by 3 points, where one is fixed and the other two can be transalted linearly using a screw-nut mechanism*
-
-<p align="center">
-<a> <img src="./IMAGES/XY_Stage_6.jpg" width="300"></a>
-</p>
-
-***2.*** *Insert the long M3 Screws in the wholes and add the spring to it*
+***1.*** *These are the parts needed for the DEVICE*
 
 <p align="center">
-<a> <img src="./IMAGES/XY_Stage_5.jpg" width="300"></a>
+<a> <img src="./IMAGES/Beamcombiner_setup_1.jpg" width="300"></a>
 </p>
 
-***3.*** *Add the levelarm to the screw and insert the M3 nut in order to pull it while rotating the screw*
+***2.*** *Start by adding the filter to the holder*
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_0.jpg" width="300"></a>
+</p>
+
+***3.*** *Add screws everywhere and also add the o-rings* Hint: The screws have been moved to an 45° angle to provide better force ratio (?); If thisneeds more explanation please reach out to us. Hint2: The screws should be pointed so that they fit into the 3D printed grooves from the kinematic mount!
 
 <p align="center">
-<a> <img src="./IMAGES/XY_Stage_4.jpg" width="300"></a>
+<a> <img src="./IMAGES/Beamcombiner_setup_2.jpg" width="300"></a>
 </p>
-
-***4.*** *Turn the screw until the lower end of the level-arm is roughly in-line with the orange frame*
 
 <p align="center">
-<a> <img src="./IMAGES/XY_Stage_3.jpg" width="300"></a>
+<a> <img src="./IMAGES/Beamcombiner_setup_3.jpg" width="300"></a>
 </p>
 
-***5.*** *Add the M3 screw and washer to have the 3rd point for the well-plate mount*
 
+***4.*** *Add the fiber mounts *
 
 <p align="center">
-<a> <img src="./IMAGES/XY_Stage_2.jpg" width="300"></a>
+<a> <img src="./IMAGES/Beamcombiner_setup_4.jpg" width="300"></a>
 </p>
-
-***6.*** *Now you can already insert the well plate and level it*
 
 <p align="center">
-<a> <img src="./IMAGES/XY_Stage_1.jpg" width="300"></a>
+<a> <img src="./IMAGES/Beamcombiner_setup_5.jpg" width="300"></a>
 </p>
 
-***6.*** *The multi-well plate holder can easily be mounted in place where you usually find the laser of the Neje mini (or similar) laser engraver. Just use some M4 screws to squeeze the frame and the adaptor together*
+
+***5.*** *Add the laser fibers*
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_6.jpg" width="300"></a>
+</p>
+
+
+***6.*** *Align the two beams so that the two circles match perfectly at various places along the optical axis* Hint: Laser safety!
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_7.jpg" width="300"></a>
+</p>
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_8.jpg" width="300"></a>
+</p>
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_10.jpg" width="300"></a>
+</p>
+
+
+***7.*** *DONE! LOOK AT THE BEAUTY!*
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_9.jpg" width="300"></a>
+</p>
 
 
 
-## Plate leveling
+# Hardware - Beamcombiner
 
-Since 3D printers are not really reliable in terms of accuracy and the stage is rather not really flat, I added springs to each corner of the base which holds the well plate. Similar to 3D printer plate leveling, you need to adjust the hight of the plate in the first run manually. This is necessary since the focus range so far is only ~1 mm I would say. I need to improve this ;-)
+Below we describe how the device can be build and assembled in order to replicate the whole system as shown in the rendering above. One needs additional parts that can be found in the core [openUC2 repository](https://github.com/openUC2/UC2-GIT).
 
-We are working on an extension which will replace this very soon!
+
+## Bill of material
+
+Below you will find all components necessary to build the beamcombiner
+
+### 3D printing files
+
+All these files in the folder [./STL/Beamcombiner](./STL/Beamcombiner) need to be printed. We used a Prusa i3 MK3 using PLA Prusament (Galaxy Black) at layer height 0.3 mm and infill 30%.
+
+Additionally you need 1x Cube.
+
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/Application_Multicolour_Fluorescence_Beamcombiner_v3.png" width="600"></a>
+</p>
+
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/Assembly_Cube_Dichroic_Beamsplitter_multi_motorized_25x35_linearmotor_lasercombiner_v3.png" width="600"></a>
+</p>
+
+
+
+
+### Additional parts
+This is used in the current version of the setup
+
+|  Type | Details  |  Price | Link  |
+|---|---|---|---|
+| Dichroic mirror | Depending on your two wavelengths (25mm diameter or 25x16mm, chosoe adapter accordingly) |  10-100 € | [Comar](https://www.comaroptics.com/components/filters/dichroic-filters/long-pass-dichroic-filters)  |
+| (optional) Fiber coupled laser | Depending on your system (e.g. MiCost, see SQUID paper) |  10-100 € | [MiCost](micost.com)  |
+| (optional) Fiber adapter | 2x Thorlabs SM1FC |  15 € | [Thorlabs](Thorlabs.com)  |
+| M3 screws | For kinematic mounting (non magnetic will be ok) |  1 € | [various](amazon.com)  |
+| O-ring | 2x to add backtracing force; 10-15mm diameter |  1 € | [various](amazon.com)  |
+
+### Design files
+The original design files are in the [INVENTOR](./INVENTOR) folder. 
+
+### Electronics
+We develop a dedicated Electronics module called [UC2 Feather](https://github.com/openUC2/UC2_Feather/). Alternatively you can use an ESP32 Wemos d32 in conjuction with an CNC Shield v3.
+
+### Assembly of the DEVICE
+
+***1.*** *These are the parts needed for the DEVICE*
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_1.jpg" width="300"></a>
+</p>
+
+***2.*** *Start by adding the filter to the holder*
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_0.jpg" width="300"></a>
+</p>
+
+***3.*** *Add screws everywhere and also add the o-rings* Hint: The screws have been moved to an 45° angle to provide better force ratio (?); If thisneeds more explanation please reach out to us. Hint2: The screws should be pointed so that they fit into the 3D printed grooves from the kinematic mount!
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_2.jpg" width="300"></a>
+</p>
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_3.jpg" width="300"></a>
+</p>
+
+
+***4.*** *Add the fiber mounts *
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_4.jpg" width="300"></a>
+</p>
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_5.jpg" width="300"></a>
+</p>
+
+
+***5.*** *Add the laser fibers*
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_6.jpg" width="300"></a>
+</p>
+
+
+***6.*** *Align the two beams so that the two circles match perfectly at various places along the optical axis* Hint: Laser safety!
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_7.jpg" width="300"></a>
+</p>
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_8.jpg" width="300"></a>
+</p>
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_10.jpg" width="300"></a>
+</p>
+
+
+***7.*** *DONE! LOOK AT THE BEAUTY!*
+
+<p align="center">
+<a> <img src="./IMAGES/Beamcombiner_setup_9.jpg" width="300"></a>
+</p>
+
+
+
+
+
+# Hardware - Filterswitcher
+
+Below we describe how the device can be build and assembled in order to replicate the whole system as shown in the rendering above. One needs additional parts that can be found in the core [openUC2 repository](https://github.com/openUC2/UC2-GIT).
+
+
+## Bill of material
+
+Below you will find all components necessary to build the filterswitcher
+
+### 3D printing files
+
+All these files in the folder [./STL/Beamcombiner](./STL/Beamcombiner) need to be printed. We used a Prusa i3 MK3 using PLA Prusament (Galaxy Black) at layer height 0.1 mm and infill 100%.
+For the filter mount it is important to place this surface on the print bed surface so that it is perfectly flat. This way you can make sure that all dichroics are mounted under the same angle. 
+
+Additionally you need several Cubes.
+
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/Application_Multicolour_Fluorescence_0Degree_v3.png" width="600"></a>
+</p>
+
+*Here the beam enters from above (or below, depending on the orientation) and will be reflected horizontally*
+
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/Application_Multicolour_Fluorescence_90Degree_v3.png" width="600"></a>
+</p>
+
+*Here the beam enters from the side and will be reflected vertically (good for inverted microscopes)*
+
+***HINT***:  you can have 3 filters too
+
+
+### Additional parts
+This is used in the current version of the setup
+
+|  Type | Details  |  Price | Link  |
+|---|---|---|---|
+| Dichroic mirror | Depending on your two wavelengths (25mm diameter o) |  10-200 € | [Thorlabs](thorlabs.com)  |
+| Emission filter | Depending on your two wavelengths (25mm diameter o) |  10-200 € | [Thorlabs](thorlabs.com)  |
+| Linear Motor | DC 12V Hub 80mm Stepper Screw 2-Phase |  10-100 € | [Amazon](https://www.amazon.de/gp/product/B07X6J8C3T/ref=ox_sc_act_title_1?smid=A119AWRA5YL9T1&psc=1)  |
+| M3 screws | For kinematic mounting (non magnetic will be ok) |  1 € | [various](amazon.com)  |
+| O-ring | 2x to add backtracing force; 10-15mm diameter |  1 € | [various](amazon.com)  |
+
+### Design files
+The original design files are in the [INVENTOR](./INVENTOR) folder. 
+
+### Electronics
+We develop a dedicated Electronics module called [UC2 Feather](https://github.com/openUC2/UC2_Feather/). Alternatively you can use an ESP32 Wemos d32 in conjuction with an CNC Shield v3.
+
+### Assembly of the DEVICE
+
+***1.*** *These are the parts needed for the DEVICE*
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/Filterswitcher_1.jpg" width="600"></a>
+</p>
+
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/Filterswitcher_2.jpg" width="600"></a>
+</p>
+Here moves the motor, glue the white pin to the filterholder<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/filtermove.gif" width="600"></a>
+</p>
+
+***2.*** Mount the Slide with M3 screws to the Cube
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/Filterswitcher_3.jpg" width="600"></a>
+</p>
+
+***3.*** Add the filters with additional M3 screws
+
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/Filterswitcher_4.jpg" width="600"></a>
+</p>
+
+***4.*** Add this to the setup
+
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/Filterswitcher_0.jpg" width="600"></a>
+</p>
 
 ## Showcase
 
-Some results will show up here
 
+Here we present a z-stack of infected epithelia cells with two different colours (GFP+AF647).
+
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/multicolour_result.gif" width="600"></a>
+</p>
+
+### In a setup
+
+***Inside an upright microscope.***
+
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/multicoloursetup_0.png" width="600"></a>
+</p>
+
+The filter is hanging here. 
+
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/multicoloursetup_1.png" width="600"></a>
+</p>
+
+
+
+
+## Deprecated
+
+In older releases, we were working on these designs:
+
+### Filter revolver
+
+
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/Assembly_Cube_Dichroic_Beamsplitter_multi_motorized_revolver_25x35_v3.png" width="600"></a>
+</p>
+
+- could be very fast
+- never "on-axis"
+- every filter has a different angle w.r.t. the incoming beam
+- hard to align
+
+### Linear filter with MGN12 slide
+
+<p align="center">
+<a href="#logo" name="logo"><img src="./IMAGES/Assembly_Cube_Dichroic_Beamsplitter_multi_motorized_25x35_v3.png" width="600"></a>
+</p>
+
+- could be very precise
+- slow motor
+- complicated to build 
+- low-cost 
+- a bit wiggely w.r.t the angle for each position (too compact 
 
 ## Further reading
 - Low-cost stage scanner: [PLoS One](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0194063)
